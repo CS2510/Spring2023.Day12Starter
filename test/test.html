@@ -1,0 +1,56 @@
+<!-- 
+    Once you serve this directory with a server (e.g. LiveServer)
+    you can open this file in a browser. This file runs tests
+    on all the games. Games that pass tests will have a green
+    checkmark. Failure is denoted by a red x.
+ -->
+<html>
+<style>
+    /* Make the iframes larger than their default size */
+    iframe {
+        width: 640px;
+        height: 480px;
+    }
+</style>
+
+<body>
+    <!-- Canvas used for internal testing. -->
+    <canvas id="canv" width=640 height=480></canvas>
+    <!-- Open the test driver for the games using iframes -->
+    <!-- <div>
+        <iframe src="./blink.test.html"></iframe>
+        <iframe src="./pong.test.html"></iframe>
+    </div> -->
+    <script type="module">
+        import "/engine/engine.js"
+        import "./components.test.js"
+        import "./test.js"
+
+        testSection("Make sure the right classes and functions are in the global namespace")
+        assert(Circle, "Circle is in the global namespace")
+        assert(Component, "Component is in the global namespace")
+        assert(GameObject, "GameObject is in the global namespace")
+        assert(Line, "Line is in the global namespace")
+        assert(Rectangle, "Rectangle is in the global namespace")
+        assert(Scene, "Scene is in the global namespace")
+        assert(SceneManager, "SceneManager is in the global namespace")
+        assert(Transform, "Transform is in the global namespace")
+        assert(Vector2, "Vector2 is in the global namespace")
+
+        testSection("Call test on engine components")
+        Circle.test()
+        Component.test()
+        GameObject.test()
+        Line.test()
+        Rectangle.test()
+        Scene.test()
+        SceneManager.test()
+        Transform.test()
+        Vector2.test()
+
+
+
+    </script>
+</body>
+
+</html>

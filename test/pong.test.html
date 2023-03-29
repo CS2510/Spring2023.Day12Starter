@@ -1,0 +1,33 @@
+<!-- The main file for testing the pong game. -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="/engine/engine.css" rel="stylesheet">
+</head>
+
+<body>
+    <canvas id="canv"></canvas>
+    <script type="module">
+        import "/engine/engine.js"
+        import "./test.js"
+        import "/pong/pong.js"
+
+        //This simple test runs the game for 100 frames 
+        //and simply tests the state of the scene manager, 
+        //which should not have changed since we began.
+        SceneManager.testScenes(allScenes, "Pong", {
+            maxFrames: 100,
+            done: (ctx) => {
+                assert(
+                    SceneManager.currentSceneIndex == 0, 
+                    "Scene index is 0")
+                assert(SceneManager.changedSceneFlag == false, "Changed Scene Flag is false")
+                assert(document.title == "Pong", "Check document title")
+                passTests()
+            }
+        })
+    </script>
+</body>
+
+</html>

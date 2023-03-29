@@ -1,0 +1,19 @@
+<!-- The main file for playing the blink game. -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="/engine/engine.css" rel="stylesheet">
+</head>
+
+<body>
+    <canvas id="canv"></canvas>
+    <script type="module">
+        import "/engine/engine.js"
+        import scene from "./test-components.js"
+        SceneManager.addScene(scene);
+        start("Test Components")
+    </script>
+</body>
+
+</html>

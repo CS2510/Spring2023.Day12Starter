@@ -1,0 +1,31 @@
+<!-- The main file for testing the blink game. -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="/engine/engine.css" rel="stylesheet">
+</head>
+
+<body>
+  <canvas id="canv"></canvas>
+  <script type="module">
+    import "/engine/engine.js"
+    import "./test.js"
+    import mainScene from "/blink/blink.js"
+    SceneManager.addScene(mainScene);
+    //The following starts the tests.
+    //It lets the engine run 255 frames and then checks to make sure
+    //that the upper righthand pixel is perfectly green.
+    test("Blink", {
+      maxFrames: 255,
+      done: (ctx) => {
+        let data = ctx.getImageData(0, 0, 1, 1).data;
+        assert(data[0] == 0 && data[1] == 255 && data[2] == 0, "The color is green.")
+        assert(document.title == "Blink", "Check document title.")
+        passTests()
+      }
+    })
+  </script>
+</body>
+
+</html>
