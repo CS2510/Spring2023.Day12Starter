@@ -119,6 +119,20 @@ class EnemyDrawComponent extends Component{
     ctx.beginPath();
     ctx.arc(this.transform.x, this.transform.y, this.transform.sx, 0, Math.PI*2)
     ctx.fill();
+
+    ctx.fillStyle =  "orange";
+    ctx.shadowColor = "orange"
+    ctx.shadowBlur = 15;
+
+    ctx.beginPath();
+    ctx.arc(this.transform.x+8, this.transform.y, this.transform.sx/7, 0, Math.PI*2)
+    ctx.fill();
+
+    ctx.beginPath()
+    ctx.arc(this.transform.x-8, this.transform.y, this.transform.sx/7, 0, Math.PI*2)
+    ctx.fill();
+
+    ctx.shadowBlur = 0
   }
 }
 
