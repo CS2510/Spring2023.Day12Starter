@@ -46,7 +46,7 @@ class BlinkComponent extends Component {
     draw(ctx) {
         ctx.fillStyle = `rgb(0, ${this.time} ,0)`
 
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        ctx.fillRect(-50, -50, 100, 100)
     }
 }
 
