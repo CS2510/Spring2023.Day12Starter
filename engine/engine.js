@@ -161,6 +161,7 @@ function engineUpdate() {
 
 let aspectRatio = 16/9
 let logicalWidth = 300
+let letterboxColor = "gray"
 
 //Draw all the objects in the scene
 function engineDraw() {
@@ -220,14 +221,14 @@ function engineDraw() {
     if(aspectRatio > currentAspectRatio){
         let desiredHeight = canvas.width/aspectRatio;
         let amount = (canvas.height-desiredHeight)/2;
-        ctx.fillStyle = "magenta"
+        ctx.fillStyle = letterboxColor
         ctx.fillRect(0,0,canvas.width, amount);
         ctx.fillRect(0,canvas.height-amount,canvas.width, amount);
     }
     else{
         let desiredWidth = canvas.height * aspectRatio
         let amount = (canvas.width-desiredWidth)/2;
-        ctx.fillStyle = "magenta"
+        ctx.fillStyle = letterboxColor
         ctx.fillRect(0,0,amount, canvas.height);
         ctx.fillRect(canvas.width-amount,0,amount, canvas.height);
     }
@@ -254,13 +255,15 @@ function engineDraw() {
  * Start the game and set the browser tabe title
  * @param {string} title The title of teh browser window
  */
-function start(title) {
+function start(title, settings = {}) {
     document.title = title
+    if(settings){
+        aspectRatio = settings.aspectRatio ? settings.aspectRatio : 16/9
+        letterboxColor = settings.letterboxColor ? settings.letterboxColor : "magenta"
+    }
     function gameLoop() {
         engineUpdate()
-
         engineDraw()
-
     }
 
     //Run the game loop 25 times a second
