@@ -9,6 +9,7 @@ import "./Rectangle.js"
 import "./Line.js"
 import "./Text.js"
 import "./Vector2.js"
+import "./Time.js"
 
 //True if the gamee is paused, false otherwise
 let pause = false
@@ -92,6 +93,11 @@ function keyDown(e) {
 
 //Update the engine
 function engineUpdate() {
+    //Match the size of the canvas to the browser's size
+    //This allows us to respond to browser size changes
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
     //Handle the case when there is a system level pause.
     if (pause) return
 
@@ -113,7 +119,7 @@ function engineUpdate() {
             }
         }
 
-        scene.start()
+        scene.start(ctx)
         SceneManager.changedSceneFlag = false
     }
 
@@ -121,7 +127,7 @@ function engineUpdate() {
     //but have not.
     for (let gameObject of scene.gameObjects) {
         if (gameObject.start && !gameObject.started) {
-            gameObject.start()
+            gameObject.start(ctx)
             gameObject.started = true
         }
     }
@@ -131,7 +137,7 @@ function engineUpdate() {
     for (let gameObject of scene.gameObjects) {
         for (let component of gameObject.components) {
             if (component.start && !component.started) {
-                component.start()
+                component.start(ctx)
                 component.started = true
             }
         }
@@ -166,11 +172,7 @@ let letterboxColor = "gray"
 //Draw all the objects in the scene
 function engineDraw() {
 
-    //Match the size of the canvas to the browser's size
-    //This allows us to respond to browser size changes
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-
+    
    
 
 
@@ -256,6 +258,13 @@ function engineDraw() {
  * @param {string} title The title of teh browser window
  */
 function start(title, settings = {}) {
+
+    //Match the size of the canvas to the browser's size
+    //This allows us to respond to browser size changes
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+
     document.title = title
     if(settings){
         aspectRatio = settings.aspectRatio ? settings.aspectRatio : 16/9
@@ -267,7 +276,7 @@ function start(title, settings = {}) {
     }
 
     //Run the game loop 25 times a second
-    setInterval(gameLoop, 1000 / 25)
+    setInterval(gameLoop, 1000 * Time.deltaTime)
 
 }
 
