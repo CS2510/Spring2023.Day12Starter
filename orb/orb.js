@@ -1,115 +1,128 @@
 class ControllerComponent extends Component {
   name = "ControllerComponent"
-  start() {
-    Camera.main.getComponent("Camera").fillStyle = "pink"
-    this.score = 0;
+  start(ctx){
+    const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+
+      // Add three color stops
+      gradient.addColorStop(0, "darkblue");
+      gradient.addColorStop(.8, "rgba(0,0,50)")
+      gradient.addColorStop(1, "black");
+
+      Camera.main.getComponent("Camera").fillStyle = gradient
+      this.setGradient = true;
   }
-  update(){
+  update() {
+    this.score = 0;
     //Check for collision
-    let squirrelGameObject = GameObject.getObjectByName("SquirrelGameObject")
-    let baddieGameObject = GameObject.getObjectByName("BaddieGameObject")
-    
-    let squirrelTransform = squirrelGameObject.transform;
-    let baddieTransform = baddieGameObject.transform;
+    let heroGameObject = GameObject.getObjectByName("HeroGameObject")
+    let enemyGameObject = GameObject.getObjectByName("EnemyGameObject")
 
-    let x1 =squirrelTransform.x;
-    let x2 = baddieTransform.x;
-    let y1 = squirrelTransform.y;
-    let y2 = baddieTransform.y;
+    let heroTransform = heroGameObject.transform;
+    let enemyTransform = enemyGameObject.transform;
 
-    let distance = Math.sqrt((x1-x2)**2+(y1-y2)**2);
-    let minDistance = squirrelTransform.sx + baddieTransform.sx;
+    let x1 = heroTransform.x;
+    let x2 = enemyTransform.x;
+    let y1 = heroTransform.y;
+    let y2 = enemyTransform.y;
 
-    if(distance < minDistance){
+    let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+    let minDistance = heroTransform.sx + enemyTransform.sx;
+
+    if (distance < minDistance) {
       SceneManager.changeScene(0)
     }
-
-
-
   }
 }
 
-let baddieBounds = 100
-class BaddieComponent extends Component {
+let enemyBounds = 100
+let enemySpeed = 100
+
+class BaseComponent extends Component {
+  draw(ctx) {
+    ctx.fillStyle = "transparent";
+    ctx.strokeStyle = "white"
+    ctx.lineWidth = 3;
+
+    ctx.shadowColor = "white"
+    ctx.shadowBlur = 15
+
+    ctx.beginPath()
+    ctx.arc(this.transform.x, this.transform.y, this.transform.sx, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.stroke();
+
+    ctx.shadowColor = "transparent"
+  }
+}
+
+class EnemyComponent extends Component {
   movingLeft = true;
-  
-  update(){
-    if(this.movingLeft){
-      this.transform.x--;
-      if(this.transform.x <= -baddieBounds){
+
+  update() {
+    if (this.movingLeft) {
+      this.transform.x -= enemySpeed * Time.deltaTime;
+      if (this.transform.x <= -enemyBounds) {
         this.movingLeft = false;
       }
     }
-    else{
-      this.transform.x++;
-      if(this.transform.x >= baddieBounds){
+    else {
+      this.transform.x += enemySpeed * Time.deltaTime;
+      if (this.transform.x >= enemyBounds) {
         this.movingLeft = true;
       }
     }
   }
-
 }
 
-let speed = 10;
-class SquirrelComponent extends Component {
+let speed = 250;
+class HeroComponent extends Component {
   MOVING_STATE = 1
   DONE_STATE = 2
   isAtBottom = true
-  start(){
+  start() {
     this.state = this.DONE_STATE
   }
-  update(){
-    if(this.state == this.MOVING_STATE){
+  update() {
+    if (this.state == this.MOVING_STATE) {
       let destinationY = 150;
-      if(!this.isAtBottom){
+      if (!this.isAtBottom) {
         destinationY = -150
       }
-      
-      if(this.transform.y != destinationY){
-        if(this.transform.y < destinationY){
-          this.transform.y += speed;
+
+      if (this.transform.y != destinationY) {
+        if (this.transform.y < destinationY) {
+          this.transform.y += speed * Time.deltaTime;
         }
-        else{
-          this.transform.y -= speed;
+        else {
+          this.transform.y -= speed * Time.deltaTime;
         }
       }
-      else{
+      else {
         this.state = this.DONE_STATE;
         GameObject.getObjectByName("ControllerGameObject").getComponent("ControllerComponent").score++;
       }
-
     }
-    else{
-      //Check for input
-      if(keysDown[" "]){
+    else {
+      if (keysDown[" "]) {
         this.state = this.MOVING_STATE;
         this.isAtBottom = !this.isAtBottom;
       }
     }
   }
-
-
 }
 
-class EnemyComponent extends Component {
-
-}
 
 class ScoreController extends Component {
-  start(){
-
+  update() {
+    this.parent.getComponent("Text").string =
+      ""
+      + GameObject.getObjectByName("ControllerGameObject").getComponent("ControllerComponent").score
   }
-  update(){
-    this.parent.getComponent("Text").string = 
-    "Squirrel Jumping Game. Score=" 
-    + GameObject.getObjectByName("ControllerGameObject").getComponent("ControllerComponent").score 
-  }
-
 }
 
 
 let baseSize = 20;
-let squirrelSize = 15;
+let heroSize = 15;
 let baseOffset = 150;
 
 class OrbScene extends Scene {
@@ -117,41 +130,49 @@ class OrbScene extends Scene {
 
     this.addGameObject(
       new GameObject("ControllerGameObject").addComponent(new ControllerComponent())
-      )
-
-    this.addGameObject(
-      new GameObject("Base1GameObject").addComponent(new Circle("Red", "Black",2)),
-      new Vector2(0, baseOffset),
-      new Vector2(baseSize, baseSize)
-      )
-
-    this.addGameObject(
-      new GameObject("Base2GameObject").addComponent(new Circle("Blue", "Black",2)),
-      new Vector2(0, -baseOffset),
-      new Vector2(baseSize,baseSize)
-      )
-
-    this.addGameObject(
-      new GameObject("SquirrelGameObject")
-      .addComponent(new Circle("brown", "orange"))
-      .addComponent(new SquirrelComponent()),
-      new Vector2(0,baseOffset),
-      new Vector2(squirrelSize, squirrelSize)
-      )
-
-    this.addGameObject(
-      new GameObject("ScoreGameObject")
-      .addComponent(new Text("Squirrel Jumping Game. Score:", "Blue", "10pt Arial"))
-      .addComponent(new ScoreController()),
-      new Vector2(9/16*-300, -200)
     )
 
     this.addGameObject(
-      new GameObject("BaddieGameObject")
-      .addComponent(new Circle("Black"))
-      .addComponent(new BaddieComponent()),
-      new Vector2(0,0),
-      new Vector2(15,15)
+      new GameObject("Base1GameObject")
+        .addComponent(new BaseComponent()),
+      new Vector2(0, baseOffset),
+      new Vector2(baseSize, baseSize)
+    )
+
+    this.addGameObject(
+      new GameObject("Base2GameObject")
+        .addComponent(new BaseComponent()),
+      new Vector2(0, -baseOffset),
+      new Vector2(baseSize, baseSize)
+    )
+
+    this.addGameObject(
+      new GameObject("HeroGameObject")
+        .addComponent(new Circle("gray", "black"))
+        .addComponent(new HeroComponent()),
+      new Vector2(0, baseOffset),
+      new Vector2(heroSize, heroSize)
+    )
+
+    this.addGameObject(
+      new GameObject("TitleGameObject")
+        .addComponent(new Text("Jumping Game:", "White", "10pt Trebuchet MS")),
+      new Vector2(9 / 16 * -300, -200)
+    )
+
+    this.addGameObject(
+      new GameObject("ScoreGameObject")
+        .addComponent(new Text("0", "White", "10pt Trebuchet MS"))
+        .addComponent(new ScoreController()),
+      new Vector2(9 / 16 * -300, -200 + 15)
+    )
+
+    this.addGameObject(
+      new GameObject("EnemyGameObject")
+        .addComponent(new Circle("Black"))
+        .addComponent(new EnemyComponent()),
+      new Vector2(0, 0),
+      new Vector2(15, 15)
     )
 
 

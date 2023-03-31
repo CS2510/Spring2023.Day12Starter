@@ -36,6 +36,7 @@ class Circle extends Component {
     ctx.strokeStyle = this.strokeStyle
     ctx.lineWidth = this.lineWidth
 
+    
     // Draw the circle
     ctx.beginPath()
     ctx.arc(this.transform.x, this.transform.y, this.transform.sx, 0, Math.PI * 2)
