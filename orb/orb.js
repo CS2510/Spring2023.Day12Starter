@@ -1,15 +1,22 @@
+let baseSize = 20;
+let heroSize = 15;
+let baseOffset = 150;
+let speed = 250;
+let enemyBounds = 100
+let enemySpeed = 100
+
 class ControllerComponent extends Component {
   name = "ControllerComponent"
-  start(ctx){
+  start(ctx) {
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
 
-      // Add three color stops
-      gradient.addColorStop(0, "darkblue");
-      gradient.addColorStop(.8, "rgba(0,0,50)")
-      gradient.addColorStop(1, "black");
+    // Add three color stops
+    gradient.addColorStop(0, "blue");
+    gradient.addColorStop(.8, "rgba(0,0,150)")
+    gradient.addColorStop(1, "black");
 
-      Camera.main.getComponent("Camera").fillStyle = gradient
-      this.setGradient = true;
+    Camera.main.getComponent("Camera").fillStyle = gradient
+    this.setGradient = true;
   }
   update() {
     this.score = 0;
@@ -34,8 +41,6 @@ class ControllerComponent extends Component {
   }
 }
 
-let enemyBounds = 100
-let enemySpeed = 100
 
 class BaseComponent extends Component {
   draw(ctx) {
@@ -43,8 +48,16 @@ class BaseComponent extends Component {
     ctx.strokeStyle = "white"
     ctx.lineWidth = 3;
 
-    ctx.shadowColor = "white"
-    ctx.shadowBlur = 15
+    //Glow if we are the next base
+    let destinationY = -150;
+    let hero = GameObject.getObjectByName("HeroGameObject").getComponent("HeroComponent")
+    if (hero.isAtBottom) {
+      destinationY = 150
+    }
+    if (this.transform.y != destinationY && hero.state == hero.DONE_STATE) {
+      ctx.shadowColor = "white"
+      ctx.shadowBlur = 8 * (Math.sin(Time.time * 5) /2 + 1) + 5
+    }
 
     ctx.beginPath()
     ctx.arc(this.transform.x, this.transform.y, this.transform.sx, 0, Math.PI * 2)
@@ -55,27 +68,8 @@ class BaseComponent extends Component {
   }
 }
 
-class EnemyComponent extends Component {
-  movingLeft = true;
-
-  update() {
-    if (this.movingLeft) {
-      this.transform.x -= enemySpeed * Time.deltaTime;
-      if (this.transform.x <= -enemyBounds) {
-        this.movingLeft = false;
-      }
-    }
-    else {
-      this.transform.x += enemySpeed * Time.deltaTime;
-      if (this.transform.x >= enemyBounds) {
-        this.movingLeft = true;
-      }
-    }
-  }
-}
-
-let speed = 250;
 class HeroComponent extends Component {
+  name = "HeroComponent"
   MOVING_STATE = 1
   DONE_STATE = 2
   isAtBottom = true
@@ -111,7 +105,6 @@ class HeroComponent extends Component {
   }
 }
 
-
 class ScoreController extends Component {
   update() {
     this.parent.getComponent("Text").string =
@@ -120,10 +113,34 @@ class ScoreController extends Component {
   }
 }
 
+class EnemyDrawComponent extends Component{
+  draw(ctx){
+    ctx.fillStyle = "black"
+    ctx.beginPath();
+    ctx.arc(this.transform.x, this.transform.y, this.transform.sx, 0, Math.PI*2)
+    ctx.fill();
+  }
+}
 
-let baseSize = 20;
-let heroSize = 15;
-let baseOffset = 150;
+class EnemyComponent extends Component {
+  movingLeft = true;
+
+  update() {
+    if (this.movingLeft) {
+      this.transform.x -= enemySpeed * Time.deltaTime;
+      if (this.transform.x <= -enemyBounds) {
+        this.movingLeft = false;
+      }
+    }
+    else {
+      this.transform.x += enemySpeed * Time.deltaTime;
+      if (this.transform.x >= enemyBounds) {
+        this.movingLeft = true;
+      }
+    }
+  }
+}
+
 
 class OrbScene extends Scene {
   start() {
@@ -148,7 +165,7 @@ class OrbScene extends Scene {
 
     this.addGameObject(
       new GameObject("HeroGameObject")
-        .addComponent(new Circle("gray", "black"))
+        .addComponent(new Circle("white"))
         .addComponent(new HeroComponent()),
       new Vector2(0, baseOffset),
       new Vector2(heroSize, heroSize)
@@ -156,7 +173,7 @@ class OrbScene extends Scene {
 
     this.addGameObject(
       new GameObject("TitleGameObject")
-        .addComponent(new Text("Jumping Game:", "White", "10pt Trebuchet MS")),
+        .addComponent(new Text("Jumping Game", "White", "10pt Trebuchet MS")),
       new Vector2(9 / 16 * -300, -200)
     )
 
@@ -169,8 +186,8 @@ class OrbScene extends Scene {
 
     this.addGameObject(
       new GameObject("EnemyGameObject")
-        .addComponent(new Circle("Black"))
-        .addComponent(new EnemyComponent()),
+        .addComponent(new EnemyComponent())
+        .addComponent(new EnemyDrawComponent()),
       new Vector2(0, 0),
       new Vector2(15, 15)
     )

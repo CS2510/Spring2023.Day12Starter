@@ -101,6 +101,8 @@ function engineUpdate() {
     //Handle the case when there is a system level pause.
     if (pause) return
 
+    Time.update();
+
     //Get a reference to the active scene.
     let scene = SceneManager.getActiveScene()
     if (SceneManager.changedSceneFlag && scene.start) {
