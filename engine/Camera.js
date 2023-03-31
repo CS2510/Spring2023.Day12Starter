@@ -22,7 +22,7 @@
 
     static get main(){
       let scene = SceneManager.getActiveScene();
-      return scene.gameObjects[0]
+      return scene.gameObjects[0].components[1]
     }
   
     /**

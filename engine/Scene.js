@@ -8,7 +8,7 @@ class Scene {
   /** List of game objects in the scene */
   gameObjects = []
 
-  constructor(fillStyle = "black"){
+  constructor(fillStyle){
     this.addGameObject(new GameObject("CameraGameObject").addComponent(new Camera(fillStyle)))
   }
 

@@ -1,12 +1,31 @@
-let baseSize = 20;
-let heroSize = 15;
-let baseOffset = 150;
-let speed = 250;
-let enemyBounds = 100
-let enemySpeed = 100
+/**
+ * Container for variables the game parameters
+ * By placing all of these here, we can tune the game easily
+ * as opposed to hunting across classes.
+ */
+class Globals{
+  static baseSize = 20
+  static heroSize = 15
+  static baseOffset = 150
+  static speed = 250
+  static enemyBounds = 100
+  static enemySpeed = 100
+}
 
+/**
+ * Invisible controller component
+ * -Sets up the camera
+ * -Stores the score
+ * -Checks for collisions.
+ */
 class ControllerComponent extends Component {
   name = "ControllerComponent"
+  /**
+   * Start the invisble controller
+   * - Setup the camera
+   * - Set the score to 0
+   * @param {CanvasRenderingContext2D} ctx The context for drawing.
+   */
   start(ctx) {
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
 
@@ -15,48 +34,83 @@ class ControllerComponent extends Component {
     gradient.addColorStop(.8, "rgba(0,0,150)")
     gradient.addColorStop(1, "black");
 
-    Camera.main.getComponent("Camera").fillStyle = gradient
+    Camera.main.fillStyle = gradient
     this.setGradient = true;
-  }
-  update() {
     this.score = 0;
-    //Check for collision
+  }
+  /**
+   * Check the state of the game by looking for collisions.
+   */
+  update() {
+    //Grab the relevant game objects
     let heroGameObject = GameObject.getObjectByName("HeroGameObject")
     let enemyGameObject = GameObject.getObjectByName("EnemyGameObject")
 
+    //Grab the relevant transforms
     let heroTransform = heroGameObject.transform;
     let enemyTransform = enemyGameObject.transform;
 
+    //Grab the individual positions
     let x1 = heroTransform.x;
     let x2 = enemyTransform.x;
     let y1 = heroTransform.y;
     let y2 = enemyTransform.y;
 
+    //Find the Euclidean distance between points
     let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+
+    //Sum the radii
     let minDistance = heroTransform.sx + enemyTransform.sx;
 
+    //Check to see if the distance between centers is less than 
+    //the sum of the radii. If it is, end the game
     if (distance < minDistance) {
+      //This effectively restarts the game since
+      //it reloads the scene and calls start again.
+      //This is rather abrupt. An improvement would give the
+      //user more feedback about what is happening.
       SceneManager.changeScene(0)
     }
   }
 }
 
-
+/**
+ * Class for the base components.
+ * The bases are the places where 
+ * the hero is "safe"
+ */
 class BaseComponent extends Component {
+  /**
+   * Draw the base to the screen
+   * We want the bases to be outlined
+   * We also want them to have a glow if they are the next
+   * destination.
+   * We also want any glow to pulse slightly.
+   * @param {CanvasRenderingContext2D} ctx The context for drawing.
+   */
   draw(ctx) {
+    //To draw only an outline, set the fillStyle to transparent
+    //Since we are manually drawing, we could just leave out fillStyle
     ctx.fillStyle = "transparent";
+
+    //The color of the outline
     ctx.strokeStyle = "white"
+
+    //Set the width of the outline
     ctx.lineWidth = 3;
 
     //Glow if we are the next base
+
+    //Grab the player's destination
     let destinationY = -150;
+    
     let hero = GameObject.getObjectByName("HeroGameObject").getComponent("HeroComponent")
     if (hero.isAtBottom) {
       destinationY = 150
     }
     if (this.transform.y != destinationY && hero.state == hero.DONE_STATE) {
       ctx.shadowColor = "white"
-      ctx.shadowBlur = 8 * (Math.sin(Time.time * 5) /2 + 1) + 5
+      ctx.shadowBlur = 8 * (Math.sin(Time.time * 5) / 2 + 1) + 5
     }
 
     ctx.beginPath()
@@ -85,15 +139,20 @@ class HeroComponent extends Component {
 
       if (this.transform.y != destinationY) {
         if (this.transform.y < destinationY) {
-          this.transform.y += speed * Time.deltaTime;
+          this.transform.y += Globals.speed * Time.deltaTime;
         }
         else {
-          this.transform.y -= speed * Time.deltaTime;
+          this.transform.y -= Globals.speed * Time.deltaTime;
         }
       }
       else {
         this.state = this.DONE_STATE;
-        GameObject.getObjectByName("ControllerGameObject").getComponent("ControllerComponent").score++;
+        let controller = 
+        GameObject.getObjectByName("ControllerGameObject")
+          .getComponent("ControllerComponent")
+          let currentScore = parseInt(controller.score);
+          currentScore ++;
+          controller.score = currentScore
       }
     }
     else {
@@ -113,23 +172,23 @@ class ScoreController extends Component {
   }
 }
 
-class EnemyDrawComponent extends Component{
-  draw(ctx){
+class EnemyDrawComponent extends Component {
+  draw(ctx) {
     ctx.fillStyle = "black"
     ctx.beginPath();
-    ctx.arc(this.transform.x, this.transform.y, this.transform.sx, 0, Math.PI*2)
+    ctx.arc(this.transform.x, this.transform.y, this.transform.sx, 0, Math.PI * 2)
     ctx.fill();
 
-    ctx.fillStyle =  "orange";
+    ctx.fillStyle = "orange";
     ctx.shadowColor = "orange"
     ctx.shadowBlur = 15;
 
     ctx.beginPath();
-    ctx.arc(this.transform.x+8, this.transform.y, this.transform.sx/7, 0, Math.PI*2)
+    ctx.arc(this.transform.x + 8, this.transform.y, this.transform.sx / 7, 0, Math.PI * 2)
     ctx.fill();
 
     ctx.beginPath()
-    ctx.arc(this.transform.x-8, this.transform.y, this.transform.sx/7, 0, Math.PI*2)
+    ctx.arc(this.transform.x - 8, this.transform.y, this.transform.sx / 7, 0, Math.PI * 2)
     ctx.fill();
 
     ctx.shadowBlur = 0
@@ -141,14 +200,14 @@ class EnemyComponent extends Component {
 
   update() {
     if (this.movingLeft) {
-      this.transform.x -= enemySpeed * Time.deltaTime;
-      if (this.transform.x <= -enemyBounds) {
+      this.transform.x -= Globals.enemySpeed * Time.deltaTime;
+      if (this.transform.x <= -Globals.enemyBounds) {
         this.movingLeft = false;
       }
     }
     else {
-      this.transform.x += enemySpeed * Time.deltaTime;
-      if (this.transform.x >= enemyBounds) {
+      this.transform.x += Globals.enemySpeed * Time.deltaTime;
+      if (this.transform.x >= Globals.enemyBounds) {
         this.movingLeft = true;
       }
     }
@@ -166,23 +225,23 @@ class OrbScene extends Scene {
     this.addGameObject(
       new GameObject("Base1GameObject")
         .addComponent(new BaseComponent()),
-      new Vector2(0, baseOffset),
-      new Vector2(baseSize, baseSize)
+      new Vector2(0, Globals.baseOffset),
+      new Vector2(Globals.baseSize, Globals.baseSize)
     )
 
     this.addGameObject(
       new GameObject("Base2GameObject")
         .addComponent(new BaseComponent()),
-      new Vector2(0, -baseOffset),
-      new Vector2(baseSize, baseSize)
+      new Vector2(0, -Globals.baseOffset),
+      new Vector2(Globals.baseSize, Globals.baseSize)
     )
 
     this.addGameObject(
       new GameObject("HeroGameObject")
         .addComponent(new Circle("white"))
         .addComponent(new HeroComponent()),
-      new Vector2(0, baseOffset),
-      new Vector2(heroSize, heroSize)
+      new Vector2(0, Globals.baseOffset),
+      new Vector2(Globals.heroSize, Globals.heroSize)
     )
 
     this.addGameObject(
@@ -205,13 +264,6 @@ class OrbScene extends Scene {
       new Vector2(0, 0),
       new Vector2(15, 15)
     )
-
-    // this.addGameObject(
-    //   new GameObject("CornerCheck")
-    //     .addComponent(new Circle("Green")),
-    //   new Vector2(-50,-50*16/9),
-    //   new Vector2(10,10)
-    // )
   }
 }
 

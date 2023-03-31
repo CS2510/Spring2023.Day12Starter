@@ -174,7 +174,7 @@ let letterboxColor = "gray"
 //Draw all the objects in the scene
 function engineDraw() {
     //Adjust for the camera
-    ctx.fillStyle = Camera.main.getComponent("Camera").fillStyle;
+    ctx.fillStyle = Camera.main.fillStyle;
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
 
