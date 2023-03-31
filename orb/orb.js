@@ -1,30 +1,56 @@
-//The code for our example game
-class OrbComponent extends Component {
-  start() {
-    Camera.main.getComponent("Camera").fillStyle = "black"
-  }
-  update() {
-  }
-  draw(ctx) {
-    ctx.fillStyle = `rgb(0, 0,255)`
-    ctx.fillRect(0, 0, 100, 100)
-  }
-}
-
 class ControllerComponent extends Component {
   name = "ControllerComponent"
   start() {
     Camera.main.getComponent("Camera").fillStyle = "pink"
     this.score = 0;
   }
+  update(){
+    //Check for collision
+    let squirrelGameObject = GameObject.getObjectByName("SquirrelGameObject")
+    let baddieGameObject = GameObject.getObjectByName("BaddieGameObject")
+    
+    let squirrelTransform = squirrelGameObject.transform;
+    let baddieTransform = baddieGameObject.transform;
+
+    let x1 =squirrelTransform.x;
+    let x2 = baddieTransform.x;
+    let y1 = squirrelTransform.y;
+    let y2 = baddieTransform.y;
+
+    let distance = Math.sqrt((x1-x2)**2+(y1-y2)**2);
+    let minDistance = squirrelTransform.sx + baddieTransform.sx;
+
+    if(distance < minDistance){
+      SceneManager.changeScene(0)
+    }
+
+
+
+  }
+}
+
+let baddieBounds = 100
+class BaddieComponent extends Component {
+  movingLeft = true;
+  
+  update(){
+    if(this.movingLeft){
+      this.transform.x--;
+      if(this.transform.x <= -baddieBounds){
+        this.movingLeft = false;
+      }
+    }
+    else{
+      this.transform.x++;
+      if(this.transform.x >= baddieBounds){
+        this.movingLeft = true;
+      }
+    }
+  }
 
 }
 
-class BaseComponent extends Component {
-
-}
-
-let speed = 2;
+let speed = 10;
 class SquirrelComponent extends Component {
   MOVING_STATE = 1
   DONE_STATE = 2
@@ -88,20 +114,23 @@ let baseOffset = 150;
 
 class OrbScene extends Scene {
   start() {
-    // this.addGameObject(new GameObject("OrbGameObject").addComponent(new OrbComponent()))
+
     this.addGameObject(
       new GameObject("ControllerGameObject").addComponent(new ControllerComponent())
       )
+
     this.addGameObject(
       new GameObject("Base1GameObject").addComponent(new Circle("Red", "Black",2)),
       new Vector2(0, baseOffset),
       new Vector2(baseSize, baseSize)
       )
+
     this.addGameObject(
       new GameObject("Base2GameObject").addComponent(new Circle("Blue", "Black",2)),
       new Vector2(0, -baseOffset),
       new Vector2(baseSize,baseSize)
       )
+
     this.addGameObject(
       new GameObject("SquirrelGameObject")
       .addComponent(new Circle("brown", "orange"))
@@ -110,11 +139,19 @@ class OrbScene extends Scene {
       new Vector2(squirrelSize, squirrelSize)
       )
 
-    let v = new Vector2(9/16*-300, -200)
-    this.addGameObject(new GameObject("ScoreGameObject")
+    this.addGameObject(
+      new GameObject("ScoreGameObject")
       .addComponent(new Text("Squirrel Jumping Game. Score:", "Blue", "10pt Arial"))
       .addComponent(new ScoreController()),
-      v
+      new Vector2(9/16*-300, -200)
+    )
+
+    this.addGameObject(
+      new GameObject("BaddieGameObject")
+      .addComponent(new Circle("Black"))
+      .addComponent(new BaddieComponent()),
+      new Vector2(0,0),
+      new Vector2(15,15)
     )
 
 
