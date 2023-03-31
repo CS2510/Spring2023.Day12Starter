@@ -11,7 +11,8 @@
     <script type="module">
         import "/engine/engine.js"
         import "./pong.js"
-        SceneManager.startScenes(allScenes, "Pong")
+        SceneManager.setScenes(allScenes)
+        start("Pong", {aspectRatio:1,logicalWidth:300})
     </script>
 </body>
 

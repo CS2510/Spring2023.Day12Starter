@@ -167,46 +167,40 @@ function engineUpdate() {
 
 }
 
-let aspectRatio = 16/9
-let logicalWidth = 300
+let requestedAspectRatio = 16/9
+let logicalWidth = 1
 let letterboxColor = "gray"
 
 //Draw all the objects in the scene
 function engineDraw() {
-
-    
-   
-
-
-
     //Adjust for the camera
     ctx.fillStyle = Camera.main.getComponent("Camera").fillStyle;
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    let currentAspectRatio = canvas.width/canvas.height;
+
+    let browserAspectRatio = canvas.width/canvas.height;
     let offsetX = 0;
     let offsetY = 0;
-    let actualWidth = canvas.width
-    if(aspectRatio > currentAspectRatio){
-        let desiredHeight = canvas.width/aspectRatio;
+    let browserWidth = canvas.width
+    if(requestedAspectRatio > browserAspectRatio){
+        let desiredHeight = canvas.width/requestedAspectRatio;
         let amount = (canvas.height-desiredHeight)/2;
         offsetY = amount;
     }
     else{
-        let desiredWidth = canvas.height * aspectRatio
+        let desiredWidth = canvas.height * requestedAspectRatio
         let amount = (canvas.width-desiredWidth)/2;
         offsetX =  amount
-        actualWidth -= 2*amount
+        browserWidth -= 2*amount
     }
 
 
     let scene = SceneManager.getActiveScene()
 
     ctx.save();
-    ctx.translate(offsetX,offsetY)
-    let logicalScale = actualWidth/logicalWidth
+    let logicalScaling = browserWidth/logicalWidth
     ctx.translate(ctx.canvas.width/2, ctx.canvas.height/2)
-    ctx.scale(logicalScale,logicalScale)
+    ctx.scale(logicalScaling,logicalScaling)
     
     ctx.translate(-Camera.main.transform.x, -Camera.main.transform.y)
 
@@ -222,15 +216,15 @@ function engineDraw() {
 
     ctx.restore();
 
-    if(aspectRatio > currentAspectRatio){
-        let desiredHeight = canvas.width/aspectRatio;
+    if(requestedAspectRatio > browserAspectRatio){
+        let desiredHeight = canvas.width/requestedAspectRatio;
         let amount = (canvas.height-desiredHeight)/2;
         ctx.fillStyle = letterboxColor
         ctx.fillRect(0,0,canvas.width, amount);
         ctx.fillRect(0,canvas.height-amount,canvas.width, amount);
     }
     else{
-        let desiredWidth = canvas.height * aspectRatio
+        let desiredWidth = canvas.height * requestedAspectRatio
         let amount = (canvas.width-desiredWidth)/2;
         ctx.fillStyle = letterboxColor
         ctx.fillRect(0,0,amount, canvas.height);
@@ -269,8 +263,9 @@ function start(title, settings = {}) {
 
     document.title = title
     if(settings){
-        aspectRatio = settings.aspectRatio ? settings.aspectRatio : 16/9
+        requestedAspectRatio = settings.aspectRatio ? settings.aspectRatio : 16/9
         letterboxColor = settings.letterboxColor ? settings.letterboxColor : "magenta"
+        logicalWidth = settings.logicalWidth ? settings.logicalWidth : 100
     }
     function gameLoop() {
         engineUpdate()

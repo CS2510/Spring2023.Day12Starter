@@ -188,14 +188,14 @@ class OrbScene extends Scene {
     this.addGameObject(
       new GameObject("TitleGameObject")
         .addComponent(new Text("Jumping Game", "White", "10pt Trebuchet MS")),
-      new Vector2(9 / 16 * -300, -200)
+      new Vector2(-125, -200)
     )
 
     this.addGameObject(
       new GameObject("ScoreGameObject")
         .addComponent(new Text("0", "White", "10pt Trebuchet MS"))
         .addComponent(new ScoreController()),
-      new Vector2(9 / 16 * -300, -200 + 15)
+      new Vector2(-125, -200 + 15)
     )
 
     this.addGameObject(
@@ -206,8 +206,12 @@ class OrbScene extends Scene {
       new Vector2(15, 15)
     )
 
-
-
+    // this.addGameObject(
+    //   new GameObject("CornerCheck")
+    //     .addComponent(new Circle("Green")),
+    //   new Vector2(-50,-50*16/9),
+    //   new Vector2(10,10)
+    // )
   }
 }
 

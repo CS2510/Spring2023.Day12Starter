@@ -31,7 +31,7 @@ class StartController extends Component {
 
     }
     update() {
-        this.freezeTime += 25 / 1000
+        this.freezeTime += Time.deltaTime
         if (keysDown["a"] && this.freezeTime >= this.maxFreezeTime) {
             SceneManager.changeScene(1)
         }
@@ -65,7 +65,7 @@ class StartCameraComponent extends Component {
 
     }
     update() {
-        this.parent.transform.x += 1;
+        this.parent.transform.x += 0;
         // this.parent.transform.sx = 10;
         // this.parent.transform.sy = 10;
     }
@@ -78,8 +78,8 @@ class StartScene extends Scene {
     start() {
         this.addGameObject(new GameObject("StartConttrollerGameObject").addComponent(new StartController()))
         this.addGameObject(new GameObject("PersistentPointsGameObject").addComponent(new PersistentPointsComponent()))
-        this.addGameObject(new GameObject("WelcomeToPongGameObject").addComponent(new Text("Welcome to Pong", "white")), new Vector2(15, 20))
-        this.addGameObject(new GameObject("MaxScoreGameObject").addComponent(new Text("", "white")).addComponent(new ScoreSetterComponent()), new Vector2(15, 45))
+        this.addGameObject(new GameObject("WelcomeToPongGameObject").addComponent(new Text("Welcome to Pong", "white")), new Vector2(-125, 20))
+        this.addGameObject(new GameObject("MaxScoreGameObject").addComponent(new Text("", "white")).addComponent(new ScoreSetterComponent()), new Vector2(-125, 45))
         Camera.main.addComponent(new StartCameraComponent());
     }
 }
@@ -96,7 +96,7 @@ class MainCameraComponent extends Component{
         //  this.transform.y = 75;
         //  this.transform.sx = 3;
         //  this.transform.sy = 3;
-        this.transform.x += .1
+        this.transform.x = 50
     }
 }
 
@@ -175,8 +175,8 @@ class BallComponent extends Component {
         let paddleX = paddleComponent.transform.x;
 
         //Model of MVC
-        this.transform.x += this.pongVX
-        this.transform.y += this.pongVY
+        this.transform.x += this.pongVX * Time.deltaTime * 10
+        this.transform.y += this.pongVY * Time.deltaTime * 10
 
         if (this.transform.x > this.margin + this.size) {
             this.pongVX *= -1
@@ -214,10 +214,10 @@ class PaddleComponent extends Component {
 
         //Update the paddle based on input
         if (keysDown["ArrowLeft"]) {
-            this.transform.x -= 2;
+            this.transform.x -= 2 * Time.deltaTime * 20;
         }
         else if (keysDown["ArrowRight"]) {
-            this.transform.x += 2
+            this.transform.x += 2 * Time.deltaTime * 20
         }
 
         //Constrain the paddle position
@@ -264,13 +264,13 @@ class MainScene extends Scene {
             new GameObject("PointsGameObject")
                 .addComponent(new PointsComponent())
                 .addComponent(new Text("Game Points: 0", "black")),
-            new Vector2(15, -50))
+            new Vector2(0, -50))
 
         this.addGameObject(
             new GameObject("MaxPointsGameObject")
                 .addComponent(new ScoreSetterComponent())
                 .addComponent(new Text("", "black")),
-            new Vector2(15, -30))
+            new Vector2(0, -30))
 
         this.addGameObject(new GameObject("PaddleGameObject").addComponent(new PaddleComponent()))
         this.addGameObject(new GameObject("WallsGameObject").addComponent(new WallsComponent()))
@@ -296,12 +296,12 @@ class EndScene extends Scene {
     }
     start() {
         this.addGameObject(new GameObject("EndControllerGameObject").addComponent(new EndController()))
-        this.addGameObject(new GameObject("EndTextGameObject").addComponent(new Text("You Died", "red")), new Vector2(15, 20))
+        this.addGameObject(new GameObject("EndTextGameObject").addComponent(new Text("You Died", "red")), new Vector2(-100, 20))
         this.addGameObject(
             new GameObject("MaxPointsGameObject")
                 .addComponent(new ScoreSetterComponent())
                 .addComponent(new Text("", "red")),
-            new Vector2(15, 37))
+            new Vector2(-100, 37))
 
     }
 }
