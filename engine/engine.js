@@ -24,9 +24,6 @@ link.href = "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20vi
 link.rel = "icon";
 document.getElementsByTagName("head")[0].appendChild(link); // for IE6
 
-let testOffset = 30;
-let nextOffset = 25;
-
 //-----------------------------------------------------------
 //Input Event handling
 //-----------------------------------------------------------
@@ -71,7 +68,6 @@ function keyUp(e) {
     if (e.key == "p") {
         pause = !pause
     }
-
 }
 
 //Key down event handlers.
@@ -92,8 +88,24 @@ function keyDown(e) {
 //Game Loop
 //-----------------------------------------------------------
 
-//Update the engine
-function engineUpdate() {
+/**
+ * The engine's game loop.
+ * This should never be called by game code.
+ * Internally, this is called every Time.deltaTime seconds.
+ * 
+ * The game loop updates the game and then draws the game
+ */
+function gameLoop() {
+    update()
+    draw()
+}
+
+/** 
+ * The update part of the game loop.
+ * 
+ * This function should never by called by game code.
+ */
+function update() {
     //Match the size of the canvas to the browser's size
     //This allows us to respond to browser size changes
     canvas.width = window.innerWidth
@@ -172,8 +184,12 @@ let requestedAspectRatio = 16/9
 let logicalWidth = 1
 let letterboxColor = "gray"
 
-//Draw all the objects in the scene
-function engineDraw() {
+/**
+ * The draw part of the game loop.
+ * 
+ * This should never be called directly from game code.
+ */
+function draw() {
     //Adjust for the camera
     ctx.fillStyle = Camera.main.fillStyle;
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -251,8 +267,14 @@ function engineDraw() {
 }
 
 /**
- * Start the game and set the browser tabe title
+ * Set the browser tab title, parse any settings, and start the game loop.
  * @param {string} title The title of the browser window
+ * @param {Object} settings The settings for the engine to parse. Defaults to an empty object.
+ * 
+ * The engine accepts the following settings. Any other keys on the settings object are ignored.
+ * - aspectRatio. The aspect ratio requested by the game. Defaults to 16/9
+ * - letterboxColor. The color of the letterboxing bars. To remove letterboxing, use "transparent". Defaults to magenta.
+ * - logicalWidth. The logical width of the game. The engine will scale the drawing area to support this logical width. Defaults to 100.
  */
 function start(title, settings = {}) {
 
@@ -268,10 +290,7 @@ function start(title, settings = {}) {
         letterboxColor = settings.letterboxColor ? settings.letterboxColor : "magenta"
         logicalWidth = settings.logicalWidth ? settings.logicalWidth : 100
     }
-    function gameLoop() {
-        engineUpdate()
-        engineDraw()
-    }
+    
 
     //Run the game loop 25 times a second
     setInterval(gameLoop, 1000 * Time.deltaTime)
@@ -285,8 +304,8 @@ function start(title, settings = {}) {
 window.start = start;
 
 /** Expose the update calls for the testing routines */
-window.engineUpdate = engineUpdate;
-window.engineDraw = engineDraw;
+window.engineUpdate = update;
+window.engineDraw = draw;
 
 /** The state of the keyboard.. */
 window.keysDown = keysDown;
