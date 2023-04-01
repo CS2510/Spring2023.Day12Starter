@@ -252,7 +252,7 @@ function engineDraw() {
 
 /**
  * Start the game and set the browser tabe title
- * @param {string} title The title of teh browser window
+ * @param {string} title The title of the browser window
  */
 function start(title, settings = {}) {
 

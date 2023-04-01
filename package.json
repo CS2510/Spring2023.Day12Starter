@@ -1,0 +1,29 @@
+{
+  "name": "spring2023.day11ender",
+  "version": "1.0.0",
+  "description": "## About",
+  "main": "index.js",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs2510/Spring2023.Day12Starter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cs2510/Spring2023.Day12Starter/issues"
+  },
+  "homepage": "https://github.com/cs2510/Spring2023.Day12Starter#readme",
+  "dependencies": {
+    "clean-jsdoc-theme": "^4.2.6",
+    "jsdoc": "^4.0.2",
+    "jsdoc3-bootstrap": "^0.15.0"
+  }
+}

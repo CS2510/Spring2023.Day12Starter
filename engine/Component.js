@@ -2,7 +2,7 @@
  * The Component class.
  * Components are where the majority of the game code goes.
  * This class should be treated as though it were abstract.
- * (You should extend this class instead of called new Component.)
+ * (You should extend this class instead of calling `new Component()`.)
  */
 class Component{
   /** The name of the component */
@@ -31,7 +31,7 @@ class Component{
    * The listener component should have a function called
    * handleUpdate(component, eventName)
    * 
-   * @param {Component} listener 
+   * @param {Component} listener The component that will listen for events
    */
   addListener(listener){
     this.listeners.push(listener);
@@ -41,7 +41,7 @@ class Component{
    * Call handleUpdate on all the listeners
    * A reference to this component and an event name
    * will be passed to each listener
-   * @param {String} eventName 
+   * @param {String} eventName The name of the event that has triggered
    */
   updateListeners(eventName){
     for(let listener of this.listeners){

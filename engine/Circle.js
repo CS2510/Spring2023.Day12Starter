@@ -17,7 +17,9 @@ class Circle extends Component {
   /**
    * Create a circle component. 
    * Has an optional color for fillStyle
-   * @param {Color} fillStyle 
+   * @param {Color} fillStyle The fill color of the circle. Defaults to white.
+   * @param {Color} strokeStyle The outline color of the circle. Defaults to transparent.
+   * @param {Number} lineWidth The thickness of the outline. Defaults to 1.
    */
   constructor(fillStyle = "white", strokeStyle = "transparent", lineWidth = 1) {
     super();
@@ -28,7 +30,7 @@ class Circle extends Component {
 
   /**
    * Draw the circle to the given context.
-   * @param {2DContext} ctx The context to draw to.
+   * @param {CanvasRenderingContext2D} ctx The context to draw to.
    */
   draw(ctx) {
     //Set the fill style

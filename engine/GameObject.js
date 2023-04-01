@@ -97,7 +97,7 @@ class GameObject {
      * 
      * Note that the Unity API takes a type as a generic argument. Since JS lacks this 
      * functionality, we use the name instead.
-     * @param {string} name 
+     * @param {string} name The name of the component to look for.
      * @returns The first game objecte with the name. Undefined if no
      * component is found.
      */
@@ -125,7 +125,7 @@ class GameObject {
      * 
      * The game object is added to the scene, and if the game object
      * has a start function, start is called.
-     * @param {GameObject} gameObject 
+     * @param {GameObject} gameObject The game object to instantiate
      */
     static instantiate(gameObject) {
         SceneManager.getActiveScene().gameObjects.push(gameObject);
