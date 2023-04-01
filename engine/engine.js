@@ -14,6 +14,7 @@ import "./Time.js"
 //True if the gamee is paused, false otherwise
 let pause = false
 
+
 //Add an aspect ratio
 //Add logical coordinates
 
@@ -274,10 +275,7 @@ function start(title, settings = {}) {
 
     //Run the game loop 25 times a second
     setInterval(gameLoop, 1000 * Time.deltaTime)
-
 }
-
-
 
 //Add certain functions to the global namespace
 //This allows us to call these functions without
@@ -289,8 +287,6 @@ window.start = start;
 /** Expose the update calls for the testing routines */
 window.engineUpdate = engineUpdate;
 window.engineDraw = engineDraw;
-
-
 
 /** The state of the keyboard.. */
 window.keysDown = keysDown;
