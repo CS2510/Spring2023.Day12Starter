@@ -103,21 +103,31 @@ class BaseComponent extends Component {
 
     //Grab the player's destination
     let destinationY = -150;
-    
+
+    //Grab the players direction
     let hero = GameObject.getObjectByName("HeroGameObject").getComponent("HeroComponent")
+    
+    //Switch the destination if needed
     if (hero.isAtBottom) {
       destinationY = 150
     }
+
+    //If the hero is done moving and not at the destination...
     if (this.transform.y != destinationY && hero.state == hero.DONE_STATE) {
+      //Add a pulse to the base
       ctx.shadowColor = "white"
+
+      //Use a trig function to make it appear to pulse
       ctx.shadowBlur = 8 * (Math.sin(Time.time * 5) / 2 + 1) + 5
     }
 
+    //Draw the base
     ctx.beginPath()
     ctx.arc(this.transform.x, this.transform.y, this.transform.sx, 0, Math.PI * 2)
     ctx.fill()
     ctx.stroke();
 
+    //Turn off any lingering "shadows"
     ctx.shadowColor = "transparent"
   }
 }
